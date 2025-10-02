@@ -337,7 +337,7 @@ After running the demo setup script, you'll have the following test accounts:
 - **Regulatory Compliance**: Built-in compliance with healthcare regulations
 - **Policy Enforcement**: Automated enforcement of healthcare policies
 
-### 🏥 Healthcare Provider Tools
+### 🏢 Healthcare Provider Tools
 
 - **Instant Access**: Real-time access to patient medical history (with permission)
 - **Immutable Records**: Tamper-proof medical record creation
@@ -446,15 +446,18 @@ Help improve our documentation:
 
 ### 💫 Core Team
 
-- **Project Lead**: [Abdelmadjid LARBI](http://linkedin.com/in/abdelmadjid-larbi-b6073b3a)
+- **Project Lead**:
+  [Mohammed TAMALI](https://github.com/mtamali)
+  [Abdelmadjid LARBI](http://linkedin.com/in/abdelmadjid-larbi-b6073b3a)
 - **Blockchain Developer**: [nasrosoft](https://github.com/nasrosoft)
 - **Frontend Developer**: [nasrosoft](https://github.com/nasrosoft)
 - **Backend Developer**: [nasrosoft](https://github.com/nasrosoft)
 
 ### 📬 Contact Information
 
-- **Email**: amdlarbi@gmail.com / nasrosoft.dev@gmail.com
+- **Email**: amdlarbi@gmail.com / mtamali@gmail.com / nasrosoft.dev@gmail.com
 - **Website**: [https://medical-passport.dz](https://medical-passport.dz) Loading..⏳
+- **LinkedIn**: [Mohammed TAMALI](linkedin.com/in/mohammed-tamali-53353544)
 - **LinkedIn**: [Abdelmadjid LARBI](http://linkedin.com/in/abdelmadjid-larbi-b6073b3a)
 - **LinkedIn**: [nasrosoft](https://www.linkedin.com/in/nasrosoft/)
 
