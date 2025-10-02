@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Passport - Interactive Demo Guide</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        min-height: 100vh;
+      }
+
+      .demo-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .demo-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .demo-header .logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 1rem;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .demo-header h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .demo-tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .demo-tab {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .demo-tab.active {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .demo-tab:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .demo-content {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .demo-step {
+        display: none;
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      .demo-step.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .step-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #4fc3f7;
+      }
+
+      .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: #4fc3f7;
+        border-radius: 50%;
+        margin-right: 1rem;
+        font-weight: bold;
+      }
+
+      .code-block {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: "Courier New", monospace;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .demo-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .action-btn.primary {
+        background: #4fc3f7;
+        border-color: #4fc3f7;
+      }
+
+      .action-btn.primary:hover {
+        background: #29b6f6;
+      }
+
+      .role-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+
+      .role-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+
+      .role-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .role-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .workflow-diagram {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .workflow-step {
+        flex: 1;
+        min-width: 150px;
+        text-align: center;
+        position: relative;
+      }
+
+      .workflow-step::after {
+        content: "→";
+        position: absolute;
+        right: -0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.5rem;
+        color: #4fc3f7;
+      }
+
+      .workflow-step:last-child::after {
+        display: none;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: left;
+      }
+
+      .alert {
+        background: rgba(255, 193, 7, 0.2);
+        border: 1px solid rgba(255, 193, 7, 0.5);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .success {
+        background: rgba(76, 175, 80, 0.2);
+        border-color: rgba(76, 175, 80, 0.5);
+      }
+
+      .info {
+        background: rgba(33, 150, 243, 0.2);
+        border-color: rgba(33, 150, 243, 0.5);
+      }
+
+      @media (max-width: 768px) {
+        .demo-header .logo {
+          width: 80px;
+          height: 80px;
+        }
+
+        .demo-header h1 {
+          font-size: 2rem;
+        }
+
+        .demo-tabs {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .workflow-diagram {
+          flex-direction: column;
+        }
+
+        .workflow-step::after {
+          content: "↓";
+          right: 50%;
+          bottom: -1rem;
+          top: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-container">
+      <div class="demo-header">
+        <img
+          src="../frontend/public/healty1.png"
+          alt="Algerian Medical Passport Logo"
+          class="logo"
+        />
+        <h1>Medical Passport Demo Guide</h1>
+        <p style="font-size: 1.2rem; opacity: 0.9; margin-top: 1rem">
+          Complete walkthrough of the Algerian Medical Passport System
+        </p>
+      </div>
+
+      <div class="demo-tabs">
+        <button class="demo-tab active" onclick="showStep('overview')">
+          📋 Overview
+        </button>
+        <button class="demo-tab" onclick="showStep('setup')">⚙️ Setup</button>
+        <button class="demo-tab" onclick="showStep('roles')">
+          👥 User Roles
+        </button>
+        <button class="demo-tab" onclick="showStep('workflows')">
+          🔄 Workflows
+        </button>
+        <button class="demo-tab" onclick="showStep('features')">
+          ✨ Features
+        </button>
+        <button class="demo-tab" onclick="showStep('testing')">
+          🧪 Testing
+        </button>
+      </div>
+
+      <!-- Overview Step -->
+      <div class="demo-step active" id="overview">
+        <div class="demo-content">
+          <h2>🌟 System Overview</h2>
+          <p>
+            The Algerian Medical Passport is a revolutionary blockchain-based
+            healthcare system that connects government, doctors, hospitals,
+            clinics, pharmacies, and patients in a secure, transparent
+            ecosystem.
+          </p>
+
+          <div class="workflow-diagram">
+            <div class="workflow-step">
+              <div class="role-icon">🏛️</div>
+              <h4>Government</h4>
+              <p>Issues medical IDs</p>
+            </div>
+            <div class="workflow-step">
+              <div class="role-icon">👨‍⚕️</div>
+              <h4>Doctors</h4>
+              <p>Create records</p>
+            </div>
+            <div class="workflow-step">
+              <div class="role-icon">🏢</div>
+              <h4>Hospitals</h4>
+              <p>Manage admissions</p>
+            </div>
+            <div class="workflow-step">
+              <div class="role-icon">🏬</div>
+              <h4>Clinics</h4>
+              <p>Outpatient care</p>
+            </div>
+            <div class="workflow-step">
+              <div class="role-icon">💊</div>
+              <h4>Pharmacies</h4>
+              <p>Verify prescriptions</p>
+            </div>
+            <div class="workflow-step">
+              <div class="role-icon">🧍</div>
+              <h4>Patients</h4>
+              <p>Control data access</p>
+            </div>
+          </div>
+
+          <div class="alert info">
+            <strong>🎯 Demo Objective:</strong> This guide will walk you through
+            the complete system from registration to prescription fulfillment.
+          </div>
+        </div>
+      </div>
+
+      <!-- Setup Step -->
+      <div class="demo-step" id="setup">
+        <div class="demo-content">
+          <h2>⚙️ Demo Setup Instructions</h2>
+
+          <div class="step-card">
+            <div
+              style="display: flex; align-items: center; margin-bottom: 1rem"
+            >
+              <span class="step-number">1</span>
+              <h3>Install Dependencies</h3>
+            </div>
+            <div class="code-block">
+              cd algerian-medical-passport-blockchain<br />
+              npm install
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div
+              style="display: flex; align-items: center; margin-bottom: 1rem"
+            >
+              <span class="step-number">2</span>
+              <h3>Start Local Blockchain</h3>
+            </div>
+            <div class="code-block">npm run node</div>
+            <p>
+              This starts a local Hardhat blockchain network with test accounts.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div
+              style="display: flex; align-items: center; margin-bottom: 1rem"
+            >
+              <span class="step-number">3</span>
+              <h3>Deploy Smart Contracts</h3>
+            </div>
+            <div class="code-block">npm run deploy:local</div>
+            <p>
+              Deploys IdentityManagement, MedicalRecords, and
+              PrescriptionManagement contracts.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div
+              style="display: flex; align-items: center; margin-bottom: 1rem"
+            >
+              <span class="step-number">4</span>
+              <h3>Setup Demo Data</h3>
+            </div>
+            <div class="code-block">
+              npx hardhat run scripts/setupDemo.js --network localhost
+            </div>
+            <p>
+              Creates sample users, medical records, and prescriptions for
+              testing.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div
+              style="display: flex; align-items: center; margin-bottom: 1rem"
+            >
+              <span class="step-number">5</span>
+              <h3>Start Applications</h3>
+            </div>
+            <div class="code-block">npm run dev</div>
+            <p>
+              Starts both frontend (port 3000) and backend (port 3001)
+              simultaneously.
+            </p>
+          </div>
+
+          <div class="alert success">
+            <strong>✅ Ready!</strong> Your demo environment is now running.
+            Open http://localhost:3000 to begin.
+          </div>
+        </div>
+      </div>
+
+      <!-- Roles Step -->
+      <div class="demo-step" id="roles">
+        <div class="demo-content">
+          <h2>👥 User Roles & Demo Accounts</h2>
+          <p>
+            The system supports six distinct user roles, each with specific
+            permissions and interfaces:
+          </p>
+
+          <div class="role-selector">
+            <div class="role-card">
+              <div class="role-icon">🏛️</div>
+              <h3>Government Official</h3>
+              <p><strong>Account #0</strong> (Deployer)</p>
+              <ul style="text-align: left; margin-top: 1rem">
+                <li>Issue medical IDs to all users</li>
+                <li>Verify healthcare provider licenses</li>
+                <li>Monitor system-wide analytics</li>
+                <li>Manage system policies</li>
+              </ul>
+            </div>
+
+            <div class="role-card">
+              <div class="role-icon">👨‍⚕️</div>
+              <h3>Doctor</h3>
+              <p><strong>Accounts #1, #2</strong></p>
+              <ul style="text-align: left; margin-top: 1rem">
+                <li>Access patient records (with permission)</li>
+                <li>Create new medical records</li>
+                <li>Issue prescriptions</li>
+                <li>Manage patient relationships</li>
+              </ul>
+            </div>
+
+            <div class="role-card">
+              <div class="role-icon">🏢</div>
+              <h3>Hospital</h3>
+              <p><strong>Account #7</strong></p>
+              <ul style="text-align: left; margin-top: 1rem">
+                <li>Manage patient admissions</li>
+                <li>Coordinate care across departments</li>
+                <li>Track treatment outcomes</li>
+                <li>Generate institutional reports</li>
+              </ul>
+            </div>
+
+            <div class="role-card">
+              <div class="role-icon">🏬</div>
+              <h3>Clinic</h3>
+              <p><strong>Account #8</strong></p>
+              <ul style="text-align: left; margin-top: 1rem">
+                <li>Provide outpatient care</li>
+                <li>Maintain consultation records</li>
+                <li>Specialized treatment tracking</li>
+                <li>Coordinate with hospitals</li>
+              </ul>
+            </div>
+
+            <div class="role-card">
+              <div class="role-icon">💊</div>
+              <h3>Pharmacy</h3>
+              <p><strong>Account #3</strong></p>
+              <ul style="text-align: left; margin-top: 1rem">
+                <li>Verify prescription authenticity</li>
+                <li>Dispense medications</li>
+                <li>Track medication inventory</li>
+                <li>Maintain dispensing records</li>
+              </ul>
+            </div>
+
+            <div class="role-card">
+              <div class="role-icon">🧍</div>
+              <h3>Patient</h3>
+              <p><strong>Accounts #4, #5, #6</strong></p>
+              <ul style="text-align: left; margin-top: 1rem">
+                <li>View complete medical history</li>
+                <li>Grant/revoke doctor access</li>
+                <li>Manage prescription notifications</li>
+                <li>Control emergency access settings</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="alert info">
+            <strong>🔑 MetaMask Setup:</strong> Import the Hardhat test accounts
+            using the provided private keys to switch between different roles
+            during the demo.
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflows Step -->
+      <div class="demo-step" id="workflows">
+        <div class="demo-content">
+          <h2>🔄 Key System Workflows</h2>
+
+          <div class="step-card">
+            <h3>🏥 Patient Registration & Access Management</h3>
+            <div class="workflow-diagram">
+              <div class="workflow-step">
+                <p><strong>1.</strong> Connect Wallet</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>2.</strong> Complete Registration</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>3.</strong> Government Verification</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>4.</strong> Access Dashboard</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <h3>👨‍⚕️ Doctor-Patient Consultation</h3>
+            <div class="workflow-diagram">
+              <div class="workflow-step">
+                <p><strong>1.</strong> Patient Grants Access</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>2.</strong> Doctor Reviews History</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>3.</strong> Create Medical Record</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>4.</strong> Issue Prescription</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <h3>💊 Prescription Fulfillment</h3>
+            <div class="workflow-diagram">
+              <div class="workflow-step">
+                <p><strong>1.</strong> Prescription Issued</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>2.</strong> Patient Visits Pharmacy</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>3.</strong> Pharmacy Verification</p>
+              </div>
+              <div class="workflow-step">
+                <p><strong>4.</strong> Medication Dispensed</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert">
+            <strong>💡 Pro Tip:</strong> Each workflow creates immutable records
+            on the blockchain, ensuring complete audit trails and preventing
+            fraud.
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Step -->
+      <div class="demo-step" id="features">
+        <div class="demo-content">
+          <h2>✨ Key Features to Demonstrate</h2>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <h3>🔐 Patient Data Ownership</h3>
+              <p>
+                Patients have complete control over who can access their medical
+                records and for how long.
+              </p>
+              <ul>
+                <li>Grant time-limited access to doctors</li>
+                <li>Revoke permissions instantly</li>
+                <li>Emergency access protocols</li>
+              </ul>
+            </div>
+
+            <div class="feature-card">
+              <h3>📋 Immutable Medical Records</h3>
+              <p>
+                All medical interactions are permanently recorded on the
+                blockchain.
+              </p>
+              <ul>
+                <li>Complete audit trail</li>
+                <li>Tamper-proof records</li>
+                <li>Real-time synchronization</li>
+              </ul>
+            </div>
+
+            <div class="feature-card">
+              <h3>💊 Smart Prescriptions</h3>
+              <p>
+                Prescriptions are cryptographically secured and automatically
+                verified.
+              </p>
+              <ul>
+                <li>Prevent prescription fraud</li>
+                <li>Track medication dispensing</li>
+                <li>Generic substitution support</li>
+              </ul>
+            </div>
+
+            <div class="feature-card">
+              <h3>🏛️ Government Oversight</h3>
+              <p>
+                Regulatory authorities maintain system integrity and generate
+                insights.
+              </p>
+              <ul>
+                <li>Healthcare provider verification</li>
+                <li>System-wide analytics</li>
+                <li>Policy enforcement</li>
+              </ul>
+            </div>
+
+            <div class="feature-card">
+              <h3>🔒 Privacy & Security</h3>
+              <p>Enterprise-grade security with patient privacy protection.</p>
+              <ul>
+                <li>End-to-end encryption</li>
+                <li>Zero-knowledge proofs ready</li>
+                <li>GDPR compliance</li>
+              </ul>
+            </div>
+
+            <div class="feature-card">
+              <h3>📱 User Experience</h3>
+              <p>
+                Intuitive interfaces designed for healthcare professionals and
+                patients.
+              </p>
+              <ul>
+                <li>Role-based dashboards</li>
+                <li>Mobile-responsive design</li>
+                <li>Real-time notifications</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testing Step -->
+      <div class="demo-step" id="testing">
+        <div class="demo-content">
+          <h2>🧪 Demo Testing Scenarios</h2>
+
+          <div class="step-card">
+            <h3>📝 Scenario 1: New Patient Registration</h3>
+            <ol style="margin-left: 2rem; margin-top: 1rem">
+              <li>Connect with Account #4 (Patient)</li>
+              <li>Complete registration form with personal details</li>
+              <li>Switch to Account #0 (Government) to verify registration</li>
+              <li>Return to Patient account to access dashboard</li>
+            </ol>
+          </div>
+
+          <div class="step-card">
+            <h3>🏢 Scenario 2: Medical Consultation</h3>
+            <ol style="margin-left: 2rem; margin-top: 1rem">
+              <li>As Patient, grant access to Doctor (Account #1)</li>
+              <li>Switch to Doctor account to view patient history</li>
+              <li>Create a new medical record for the patient</li>
+              <li>Issue a prescription for treatment</li>
+              <li>Patient receives notifications of new records</li>
+            </ol>
+          </div>
+
+          <div class="step-card">
+            <h3>💊 Scenario 3: Prescription Fulfillment</h3>
+            <ol style="margin-left: 2rem; margin-top: 1rem">
+              <li>Patient visits pharmacy with prescription</li>
+              <li>Switch to Pharmacy account (Account #3)</li>
+              <li>Verify prescription authenticity on blockchain</li>
+              <li>Dispense medication and update system</li>
+              <li>Track fulfillment in patient's record</li>
+            </ol>
+          </div>
+
+          <div class="alert success">
+            <strong>🎯 Success Metrics:</strong> After completing these
+            scenarios, you'll have demonstrated the complete healthcare workflow
+            from registration to treatment completion.
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-actions">
+        <a href="http://localhost:3000" class="action-btn primary">
+          🚀 Launch Demo Application
+        </a>
+        <a href="../README.md" class="action-btn"> 📖 View Documentation </a>
+        <a href="EXECUTIVE_PRESENTATION.html" class="action-btn">
+          📊 Executive Presentation
+        </a>
+        <button class="action-btn" onclick="printGuide()">
+          🖨️ Print Guide
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function showStep(stepId) {
+        // Hide all steps
+        const steps = document.querySelectorAll(".demo-step")
+        steps.forEach((step) => step.classList.remove("active"))
+
+        // Remove active class from all tabs
+        const tabs = document.querySelectorAll(".demo-tab")
+        tabs.forEach((tab) => tab.classList.remove("active"))
+
+        // Show selected step
+        document.getElementById(stepId).classList.add("active")
+
+        // Add active class to clicked tab
+        event.target.classList.add("active")
+      }
+
+      function printGuide() {
+        window.print()
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        const steps = [
+          "overview",
+          "setup",
+          "roles",
+          "workflows",
+          "features",
+          "testing",
+        ]
+        const activeStep = document.querySelector(".demo-step.active").id
+        const currentIndex = steps.indexOf(activeStep)
+
+        if (e.key === "ArrowRight" && currentIndex < steps.length - 1) {
+          showStep(steps[currentIndex + 1])
+          document
+            .querySelector(`[onclick="showStep('${steps[currentIndex + 1]}')"]`)
+            .classList.add("active")
+        } else if (e.key === "ArrowLeft" && currentIndex > 0) {
+          showStep(steps[currentIndex - 1])
+          document
+            .querySelector(`[onclick="showStep('${steps[currentIndex - 1]}')"]`)
+            .classList.add("active")
+        }
+      })
+    </script>
+  </body>
+</html>

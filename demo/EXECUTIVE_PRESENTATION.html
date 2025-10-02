@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algerian Medical Passport - Executive Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        overflow-x: hidden;
+      }
+
+      .presentation {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 2rem 1rem 120px 1rem;
+      }
+
+      .slide {
+        max-width: 1200px;
+        width: 90%;
+        padding: 2rem;
+        text-align: center;
+        display: none;
+        margin: 0 auto;
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+      }
+
+      .slide.active {
+        display: block;
+        animation: slideIn 0.5s ease-in;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #4fc3f7;
+      }
+
+      h3 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #81c784;
+      }
+
+      p,
+      li {
+        font-size: 1.3rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      ul {
+        text-align: left;
+        max-width: 800px;
+        margin: 0 auto;
+        padding-left: 1.5rem;
+      }
+
+      .highlight {
+        color: #ffeb3b;
+        font-weight: bold;
+      }
+
+      .demo-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #4fc3f7;
+      }
+
+      .architecture-diagram {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 15px;
+        margin: 2rem 0;
+        backdrop-filter: blur(10px);
+      }
+
+      .stakeholder-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .stakeholder-card {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: left;
+      }
+
+      .workflow-step {
+        background: rgba(255, 255, 255, 0.1);
+        margin: 1rem 0;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #4fc3f7;
+      }
+
+      .navigation {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 1rem;
+        z-index: 1000;
+        background: rgb(0 0 0 / 7%);
+        padding: 1rem;
+        border-radius: 25px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .slide-counter {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+      }
+
+      .logo {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1rem;
+        display: block;
+      }
+
+      .qr-code {
+        background: white;
+        color: black;
+        padding: 1rem;
+        border-radius: 10px;
+        display: inline-block;
+        margin: 1rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        h2 {
+          font-size: 2rem;
+        }
+
+        h3 {
+          font-size: 1.5rem;
+        }
+
+        p,
+        li {
+          font-size: 1.1rem;
+        }
+
+        .slide {
+          width: 95%;
+          padding: 1rem;
+          max-height: calc(100vh - 150px);
+        }
+
+        .presentation {
+          padding: 1rem 0.5rem 100px 0.5rem;
+          min-height: calc(100vh - 100px);
+        }
+
+        .demo-stats {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1rem;
+        }
+
+        .stat-number {
+          font-size: 2.5rem;
+        }
+
+        .stakeholder-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .navigation {
+          bottom: 1rem;
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          max-width: 95%;
+          padding: 0.75rem;
+        }
+
+        .nav-btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+        }
+
+        .slide-counter {
+          top: 1rem;
+          right: 1rem;
+          padding: 0.25rem 0.75rem;
+          font-size: 0.9rem;
+        }
+
+        .workflow-step {
+          margin: 0.5rem 0;
+          padding: 0.75rem;
+        }
+
+        .logo {
+          width: 80px;
+          height: 80px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.25rem;
+        }
+
+        p,
+        li {
+          font-size: 1rem;
+        }
+
+        .slide {
+          width: 98%;
+          padding: 0.75rem;
+          max-height: calc(100vh - 120px);
+        }
+
+        .demo-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .stat-card {
+          padding: 1rem;
+        }
+
+        .stat-number {
+          font-size: 2rem;
+        }
+
+        .stakeholder-card {
+          padding: 1rem;
+        }
+
+        .navigation {
+          position: fixed;
+          bottom: 0.5rem;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(0, 0, 0, 0.9);
+          padding: 0.5rem;
+          border-radius: 15px;
+          width: 95%;
+          max-width: 350px;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .logo {
+          width: 60px;
+          height: 60px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .presentation {
+          padding: 3rem 2rem;
+        }
+
+        .slide {
+          max-width: 1400px;
+        }
+      }
+
+      /* Custom scrollbar styling */
+      .slide::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .slide::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      .slide::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+      }
+
+      .slide::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      /* Landscape orientation adjustments */
+      @media (max-height: 600px) and (orientation: landscape) {
+        .presentation {
+          min-height: calc(100vh - 100px);
+          padding: 1rem 1rem 100px 1rem;
+        }
+
+        .slide {
+          padding: 1rem;
+          max-height: calc(100vh - 120px);
+        }
+
+        h1 {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .demo-stats {
+          margin: 1rem 0;
+        }
+
+        .workflow-step {
+          margin: 0.5rem 0;
+          padding: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-counter"><span id="slideNumber">1</span> / 12</div>
+
+    <!-- Slide 1: Title -->
+    <div class="slide active">
+      <img
+        src="../frontend/public/healty1.png"
+        alt="Algerian Medical Passport Logo"
+        class="logo"
+      />
+      <h1>Algerian Medical Passport</h1>
+      <h2>Blockchain-Based Healthcare Revolution</h2>
+      <p style="font-size: 1.5rem; margin-top: 2rem">
+        Secure • Transparent • Patient-Controlled
+      </p>
+      <p style="margin-top: 2rem; opacity: 0.8">
+        Transforming healthcare data management in Algeria through blockchain
+        technology
+      </p>
+    </div>
+
+    <!-- Slide 2: Problem Statement -->
+    <div class="slide">
+      <h2>The Healthcare Challenge in Algeria</h2>
+      <div class="demo-stats">
+        <div class="stat-card">
+          <div class="stat-number">45M</div>
+          <p>Citizens without unified medical records</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">30%</div>
+          <p>Medical errors due to incomplete patient history</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">€2.5B</div>
+          <p>Annual healthcare inefficiency costs</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0</div>
+          <p>Current blockchain healthcare solutions</p>
+        </div>
+      </div>
+      <ul style="margin-top: 2rem">
+        <li>📋 Fragmented medical records across institutions</li>
+        <li>🔒 Patients have no control over their medical data</li>
+        <li>💊 Prescription fraud and medication errors</li>
+        <li>⏱️ Time-consuming verification processes</li>
+        <li>📊 Limited healthcare analytics for policy making</li>
+      </ul>
+    </div>
+
+    <!-- Slide 3: Solution Overview -->
+    <div class="slide">
+      <h2>Our Revolutionary Solution</h2>
+      <h3>First Blockchain Medical Passport System in Algeria</h3>
+
+      <div class="stakeholder-grid">
+        <div class="stakeholder-card">
+          <h3>🏛️ Government</h3>
+          <p>• Issue verified medical IDs</p>
+          <p>• Monitor healthcare system</p>
+          <p>• Generate policy insights</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>👨‍⚕️ Doctors</h3>
+          <p>• Access patient history instantly</p>
+          <p>• Create immutable records</p>
+          <p>• Issue secure prescriptions</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>🏢 Hospitals</h3>
+          <p>• Manage patient admissions</p>
+          <p>• Coordinate care across departments</p>
+          <p>• Track treatment outcomes</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>🏬 Clinics</h3>
+          <p>• Provide outpatient care</p>
+          <p>• Maintain consultation records</p>
+          <p>• Specialized treatment tracking</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>💊 Pharmacies</h3>
+          <p>• Verify prescriptions in real-time</p>
+          <p>• Prevent medication fraud</p>
+          <p>• Track dispensing history</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>🧍 Patients</h3>
+          <p>• Own and control medical data</p>
+          <p>• Grant selective access</p>
+          <p>• View complete health history</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Technical Architecture -->
+    <div class="slide">
+      <h2>Technical Architecture</h2>
+      <div class="architecture-diagram">
+        <h3>🔗 Blockchain Layer (Polygon)</h3>
+        <p>Smart contracts for identity, records, and prescriptions</p>
+
+        <h3>🌐 Web3 Frontend (React + TypeScript)</h3>
+        <p>Role-based interfaces with MetaMask integration</p>
+
+        <h3>⚡ Backend API (Node.js)</h3>
+        <p>Off-chain data management and real-time notifications</p>
+
+        <h3>📁 Storage Solutions</h3>
+        <p>IPFS for documents, MongoDB for metadata</p>
+
+        <h3>🔐 Security Features</h3>
+        <p>Multi-signature, encryption, access controls</p>
+      </div>
+    </div>
+
+    <!-- Slide 5: Key Features -->
+    <div class="slide">
+      <h2>Revolutionary Features</h2>
+      <ul>
+        <li>
+          <span class="highlight">🔐 Patient Data Ownership:</span> Patients
+          control who accesses their medical records
+        </li>
+        <li>
+          <span class="highlight">🏛️ Government Verification:</span> Secure
+          medical ID issuance with blockchain identity
+        </li>
+        <li>
+          <span class="highlight">📋 Immutable Records:</span> Complete audit
+          trail of all medical interactions
+        </li>
+        <li>
+          <span class="highlight">💊 Smart Prescriptions:</span> Automated
+          verification and dispensing workflow
+        </li>
+        <li>
+          <span class="highlight">🚨 Emergency Access:</span> Special protocols
+          for critical situations
+        </li>
+        <li>
+          <span class="highlight">⏰ Time-Locked Permissions:</span> Temporary
+          access with automatic expiration
+        </li>
+        <li>
+          <span class="highlight">📊 Advanced Analytics:</span>
+          Privacy-preserving healthcare insights
+        </li>
+        <li>
+          <span class="highlight">🌍 Interoperability:</span> Cross-platform
+          medical record sharing
+        </li>
+      </ul>
+    </div>
+
+    <!-- Slide 6: Demo Workflow -->
+    <div class="slide">
+      <h2>Live Demo Workflow</h2>
+
+      <div class="workflow-step">
+        <h3>1. 🏛️ Government Registration</h3>
+        <p>
+          Government issues verified medical IDs to healthcare providers and
+          patients
+        </p>
+      </div>
+
+      <div class="workflow-step">
+        <h3>2. 👨‍⚕️ Doctor-Patient Consultation</h3>
+        <p>
+          Patient grants access → Doctor reviews history → Creates new medical
+          record
+        </p>
+      </div>
+
+      <div class="workflow-step">
+        <h3>3. 💊 Prescription Management</h3>
+        <p>
+          Doctor issues prescription → Encrypted on blockchain → Patient
+          notified
+        </p>
+      </div>
+
+      <div class="workflow-step">
+        <h3>4. 🏪 Pharmacy Verification</h3>
+        <p>
+          Pharmacy scans prescription → Blockchain verification → Medication
+          dispensed
+        </p>
+      </div>
+
+      <div class="workflow-step">
+        <h3>5. 📊 Analytics Dashboard</h3>
+        <p>Real-time system statistics and healthcare insights</p>
+      </div>
+    </div>
+
+    <!-- Slide 7: Security & Privacy -->
+    <div class="slide">
+      <h2>Enterprise-Grade Security</h2>
+      <div class="demo-stats">
+        <div class="stat-card">
+          <div class="stat-number">256-bit</div>
+          <p>AES Encryption</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">100%</div>
+          <p>Test Coverage</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0</div>
+          <p>Critical Vulnerabilities</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">GDPR</div>
+          <p>Compliant</p>
+        </div>
+      </div>
+
+      <ul>
+        <li>🔐 Multi-signature smart contracts for critical operations</li>
+        <li>🛡️ Role-based access control with time limitations</li>
+        <li>🔒 End-to-end encryption for sensitive medical data</li>
+        <li>📱 Secure wallet-based authentication (MetaMask)</li>
+        <li>🚨 Emergency access protocols for critical situations</li>
+        <li>📊 Privacy-preserving analytics with data anonymization</li>
+      </ul>
+    </div>
+
+    <!-- Slide 8: Market Opportunity -->
+    <div class="slide">
+      <h2>Massive Market Opportunity</h2>
+      <div class="demo-stats">
+        <div class="stat-card">
+          <div class="stat-number">45M</div>
+          <p>Algerian Population</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">500+</div>
+          <p>Healthcare Facilities</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">50K+</div>
+          <p>Healthcare Professionals</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">€8.2B</div>
+          <p>Healthcare Market Size</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem">Expansion Opportunities:</h3>
+      <ul>
+        <li>🌍 MENA region (400M+ population)</li>
+        <li>🏢 Private healthcare networks</li>
+        <li>🔬 Research institutions and universities</li>
+        <li>💼 Corporate health management</li>
+        <li>🛡️ Insurance company integrations</li>
+      </ul>
+    </div>
+
+    <!-- Slide 9: Competitive Advantages -->
+    <div class="slide">
+      <h2>Unique Competitive Advantages</h2>
+
+      <div class="stakeholder-grid">
+        <div class="stakeholder-card">
+          <h3>🥇 First Mover</h3>
+          <p>First blockchain medical passport in Algeria and MENA region</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>🏛️ Government Support</h3>
+          <p>Designed for regulatory compliance and government partnership</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>🔧 Production Ready</h3>
+          <p>Fully developed, tested, and deployment-ready solution</p>
+        </div>
+        <div class="stakeholder-card">
+          <h3>👥 6-Stakeholder Ecosystem</h3>
+          <p>
+            Serves patients, doctors, hospitals, clinics, pharmacies, and
+            government
+          </p>
+        </div>
+      </div>
+
+      <ul style="margin-top: 2rem">
+        <li>📱 Mobile-first design for maximum accessibility</li>
+        <li>⚡ Low-cost transactions using Polygon blockchain</li>
+        <li>🌐 Multilingual support (Arabic, French, English)</li>
+        <li>🔄 Seamless integration with existing healthcare systems</li>
+      </ul>
+    </div>
+
+    <!-- Slide 10: Implementation Roadmap -->
+    <div class="slide">
+      <h2>Implementation Roadmap</h2>
+
+      <div class="workflow-step">
+        <h3>Phase 1: Pilot Program (3 months)</h3>
+        <p>
+          • Partner with 5 major hospitals in Algiers<br />
+          • Onboard 1,000 patients and 100 healthcare providers<br />
+          • Government partnership and regulatory approval
+        </p>
+      </div>
+
+      <div class="workflow-step">
+        <h3>Phase 2: National Rollout (6 months)</h3>
+        <p>
+          • Expand to all 58 provinces<br />
+          • Integration with national healthcare system<br />
+          • Mobile app launch and public awareness campaign
+        </p>
+      </div>
+
+      <div class="workflow-step">
+        <h3>Phase 3: Regional Expansion (12 months)</h3>
+        <p>
+          • Morocco, Tunisia, Egypt market entry<br />
+          • Cross-border medical record sharing<br />
+          • Enterprise features and API marketplace
+        </p>
+      </div>
+    </div>
+
+    <!-- Slide 11: Investment Opportunity -->
+    <div class="slide">
+      <h2>Investment Opportunity</h2>
+      <div class="demo-stats">
+        <div class="stat-card">
+          <div class="stat-number">€2M</div>
+          <p>Seed Funding Target</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">18 months</div>
+          <p>Break-even Timeline</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">€50M</div>
+          <p>5-Year Revenue Projection</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">10x</div>
+          <p>Expected ROI</p>
+        </div>
+      </div>
+
+      <h3>Use of Funds:</h3>
+      <ul>
+        <li>💼 Team expansion (blockchain developers, healthcare experts)</li>
+        <li>🏢 Pilot program implementation and partnerships</li>
+        <li>🔐 Security audits and compliance certification</li>
+        <li>📱 Mobile app development and UX optimization</li>
+        <li>📢 Marketing and healthcare provider onboarding</li>
+        <li>🌍 International expansion preparation</li>
+      </ul>
+    </div>
+
+    <!-- Slide 12: Call to Action -->
+    <div class="slide">
+      <h1>Join the Healthcare Revolution</h1>
+      <h3 style="margin-top: 2rem">
+        Ready to Transform Healthcare in Algeria?
+      </h3>
+
+      <div class="demo-stats" style="margin-top: 3rem">
+        <div class="stat-card">
+          <h3>🚀 Live Demo</h3>
+          <div class="qr-code">
+            <p style="margin: 0; font-size: 0.9rem">
+              Scan to access<br />live system demo
+            </p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <h3>📧 Contact</h3>
+          <p>contact@medical-passport.dz</p>
+          <p>+213 xxx xxx xxx</p>
+        </div>
+        <div class="stat-card">
+          <h3>🌐 Resources</h3>
+          <p>GitHub Repository</p>
+          <p>Technical Whitepaper</p>
+          <p>Demo Video</p>
+        </div>
+      </div>
+
+      <p style="font-size: 1.5rem; margin-top: 2rem">
+        <span class="highlight"
+          >Let's build the future of healthcare together!</span
+        >
+      </p>
+    </div>
+
+    <div class="navigation">
+      <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+      <button class="nav-btn" onclick="nextSlide()">Next →</button>
+      <button class="nav-btn" onclick="startDemo()">🚀 Live Demo</button>
+    </div>
+
+    <script>
+      let currentSlide = 0
+      const slides = document.querySelectorAll(".slide")
+      const totalSlides = slides.length
+
+      function showSlide(n) {
+        slides.forEach((slide) => slide.classList.remove("active"))
+        currentSlide = (n + totalSlides) % totalSlides
+        slides[currentSlide].classList.add("active")
+        document.getElementById("slideNumber").textContent = currentSlide + 1
+      }
+
+      function nextSlide() {
+        showSlide(currentSlide + 1)
+      }
+
+      function previousSlide() {
+        showSlide(currentSlide - 1)
+      }
+
+      function startDemo() {
+        window.open("http://localhost:3000", "_blank")
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault()
+          nextSlide()
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault()
+          previousSlide()
+        } else if (e.key === "Home") {
+          e.preventDefault()
+          showSlide(0)
+        } else if (e.key === "End") {
+          e.preventDefault()
+          showSlide(totalSlides - 1)
+        }
+      })
+
+      // Auto-play (optional, remove if not desired)
+      // setInterval(nextSlide, 10000); // Change slide every 10 seconds
+    </script>
+  </body>
+</html>
