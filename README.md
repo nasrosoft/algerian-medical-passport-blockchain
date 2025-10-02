@@ -457,7 +457,7 @@ Help improve our documentation:
 
 - **Email**: amdlarbi@gmail.com / mtamali@gmail.com / nasrosoft.dev@gmail.com
 - **Website**: [https://medical-passport.dz](https://medical-passport.dz) Loading..⏳
-- **LinkedIn**: [Mohammed TAMALI](linkedin.com/in/mohammed-tamali-53353544)
+- **LinkedIn**: [Mohammed TAMALI](https://linkedin.com/in/mohammed-tamali-53353544)
 - **LinkedIn**: [Abdelmadjid LARBI](http://linkedin.com/in/abdelmadjid-larbi-b6073b3a)
 - **LinkedIn**: [nasrosoft](https://www.linkedin.com/in/nasrosoft/)
 
