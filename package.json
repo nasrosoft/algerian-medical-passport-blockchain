@@ -79,10 +79,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/algerian-medical-passport-blockchain.git"
+    "url": "https://github.com/nasrosoft/algerian-medical-passport-blockchain.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/algerian-medical-passport-blockchain/issues"
+    "url": "https://github.com/nasrosoft/algerian-medical-passport-blockchain/issues"
   },
-  "homepage": "https://github.com/yourusername/algerian-medical-passport-blockchain#readme"
+  "homepage": "https://github.com/nasrosoft/algerian-medical-passport-blockchain#readme"
 }
