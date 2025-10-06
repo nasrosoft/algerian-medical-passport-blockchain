@@ -67,6 +67,10 @@ jobs:
         run: npm run lint
         continue-on-error: false
 
+      - name: Check Solidity formatting
+        run: npm run format:check || echo "Format check not configured"
+        continue-on-error: true
+
   security:
     name: Security Audit
     runs-on: ubuntu-latest
@@ -88,101 +92,6 @@ jobs:
         run: npm audit --omit=dev
         continue-on-error: true
 
-      - name: Install frontend dependencies
-        run: |
-          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
-            cd frontend && npm ci
-          fi
-
-      - name: Install backend dependencies
-        run: |
-          if [ -d "backend" ] && [ -f "backend/package.json" ]; then
-            cd backend && npm ci
-          fi
-
-      - name: Run smart contract tests
-        run: npm test
-        continue-on-error: false
-
-      - name: Run frontend tests
-        if: hashFiles('frontend/package.json') != ''
-        run: |
-          cd frontend
-          npm test -- --coverage --watchAll=false || echo "Frontend tests not configured"
-        continue-on-error: true
-
-      - name: Run backend tests
-        if: hashFiles('backend/package.json') != ''
-        run: |
-          cd backend
-          npm test || echo "Backend tests not configured"
-        continue-on-error: true
-
-      - name: Generate test coverage
-        run: npm run coverage || echo "Coverage not configured"
-        continue-on-error: true
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        if: hashFiles('coverage/lcov.info') != ''
-        with:
-          file: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-        continue-on-error: true
-
-  lint:
-    name: Lint Code
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-          cache: "npm"
-
-      - name: Clear npm cache
-        run: npm cache clean --force
-        
-      - name: Install dependencies
-        run: npm ci --prefer-offline
-
-      - name: Run ESLint
-        run: npm run lint
-        continue-on-error: false
-
-      - name: Check Solidity formatting
-        run: npm run format:check || echo "Format check not configured"
-        continue-on-error: true
-
-  security:
-    name: Security Audit
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-          cache: "npm"
-
-      - name: Clear npm cache
-        run: npm cache clean --force
-        
-      - name: Install dependencies
-        run: npm ci --prefer-offline
-
-      - name: Run npm audit
-        run: npm audit --omit=dev || true
-        continue-on-error: true
-
       - name: Run Slither analysis
         uses: crytic/slither-action@v0.3.0
         if: hashFiles('contracts/**/*.sol') != ''
@@ -200,24 +109,24 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
-          cache: "npm"
+          # cache: "npm"  # Temporarily disabled for debugging
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install || npm install --legacy-peer-deps
 
       - name: Install frontend dependencies
         if: hashFiles('frontend/package.json') != ''
-        run: cd frontend && npm ci
+        run: cd frontend && npm install
 
       - name: Install backend dependencies
         if: hashFiles('backend/package.json') != ''
-        run: cd backend && npm ci
+        run: cd backend && npm install
 
       - name: Build contracts
         run: npm run build || npm run compile || echo "Build script not found"
@@ -233,7 +142,7 @@ jobs:
         continue-on-error: true
 
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-files
           path: |
@@ -250,16 +159,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
-          cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Deploy to Polygon Mumbai
         env:
@@ -279,16 +187,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
-          cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Deploy to Polygon Mainnet
         env:
