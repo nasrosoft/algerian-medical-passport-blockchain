@@ -28,7 +28,7 @@ module.exports = {
         enabled: true,
         runs: 200,
       },
-      viaIR: true, // Enable intermediate representation to avoid stack too deep
+      viaIR: true, // Required for complex contracts to avoid stack too deep
     },
   },
   networks: {

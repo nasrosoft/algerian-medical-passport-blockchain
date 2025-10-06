@@ -10,6 +10,8 @@
     "deploy:testnet": "hardhat run scripts/deploy.js --network polygonMumbai",
     "deploy:mainnet": "hardhat run scripts/deploy.js --network polygon",
     "verify": "hardhat verify --network polygonMumbai",
+    "verify:testnet": "hardhat verify --network polygonMumbai",
+    "verify:mainnet": "hardhat verify --network polygon",
     "coverage": "hardhat coverage",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
@@ -18,8 +20,10 @@
     "lint": "eslint . --ext .js,.ts,.json",
     "lint:fix": "eslint . --ext .js,.ts,.json --fix",
     "format": "prettier --write \"**/*.{js,ts,json,md,sol}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,json,md,sol}\"",
     "clean": "hardhat clean",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "build": "hardhat compile"
   },
   "keywords": [
     "blockchain",
@@ -51,6 +55,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "ethereum-waffle": "^4.0.10",
     "ethers": "^5.7.2",
+    "ganache": "^7.9.2",
     "hardhat": "^2.15.0",
     "hardhat-gas-reporter": "^1.0.9",
     "prettier": "^2.8.8",
