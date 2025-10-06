@@ -46,13 +46,15 @@ module.exports = {
     },
     polygonMumbai: {
       url: process.env.POLYGON_MUMBAI_URL || "https://rpc-mumbai.maticvigil.com/",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: process.env.TESTNET_PRIVATE_KEY ? [process.env.TESTNET_PRIVATE_KEY] : 
+                process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 80001,
       gasPrice: 8000000000, // 8 gwei
     },
     polygon: {
-      url: process.env.POLYGON_URL || "https://polygon-rpc.com/",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      url: process.env.POLYGON_MAINNET_URL || process.env.POLYGON_URL || "https://polygon-rpc.com/",
+      accounts: process.env.MAINNET_PRIVATE_KEY ? [process.env.MAINNET_PRIVATE_KEY] : 
+                process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 137,
       gasPrice: 40000000000, // 40 gwei
     },

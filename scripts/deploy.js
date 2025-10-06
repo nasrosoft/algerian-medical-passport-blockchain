@@ -1,8 +1,31 @@
 const hre = require("hardhat");
 
 async function main() {
-  const [deployer] = await hre.ethers.getSigners();
+  // Check if we have signers available
+  const signers = await hre.ethers.getSigners();
+  
+  if (signers.length === 0) {
+    throw new Error(
+      "No signers found. Please ensure you have configured a private key for this network.\n" +
+      "For mainnet: Set MAINNET_PRIVATE_KEY or PRIVATE_KEY environment variable.\n" +
+      "For testnet: Set TESTNET_PRIVATE_KEY or PRIVATE_KEY environment variable."
+    );
+  }
+  
+  const [deployer] = signers;
+  
+  if (!deployer) {
+    throw new Error("Deployer is undefined. Check your network configuration and private key setup.");
+  }
 
+  console.log("Network:", hre.network.name);
+  console.log("Chain ID:", hre.network.config.chainId);
+  console.log("Available environment variables:");
+  console.log("- PRIVATE_KEY:", process.env.PRIVATE_KEY ? "✓ Set" : "✗ Not set");
+  console.log("- MAINNET_PRIVATE_KEY:", process.env.MAINNET_PRIVATE_KEY ? "✓ Set" : "✗ Not set");
+  console.log("- TESTNET_PRIVATE_KEY:", process.env.TESTNET_PRIVATE_KEY ? "✓ Set" : "✗ Not set");
+  console.log("- POLYGON_MAINNET_URL:", process.env.POLYGON_MAINNET_URL ? "✓ Set" : "✗ Not set");
+  console.log("- POLYGONSCAN_API_KEY:", process.env.POLYGONSCAN_API_KEY ? "✓ Set" : "✗ Not set");
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
