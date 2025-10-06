@@ -23,7 +23,8 @@
     "format:check": "prettier --check \"**/*.{js,ts,json,md,sol}\"",
     "clean": "hardhat clean",
     "node": "hardhat node",
-    "build": "hardhat compile"
+    "build": "hardhat compile",
+    "debug:env": "node scripts/debug-env.js"
   },
   "keywords": [
     "blockchain",

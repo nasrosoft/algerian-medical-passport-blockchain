@@ -190,6 +190,7 @@ jobs:
       - name: Deploy to Polygon Mumbai
         env:
           PRIVATE_KEY: ${{ secrets.TESTNET_PRIVATE_KEY }}
+          TESTNET_PRIVATE_KEY: ${{ secrets.TESTNET_PRIVATE_KEY }}
           POLYGON_MUMBAI_URL: ${{ secrets.POLYGON_MUMBAI_URL }}
           POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
         run: |
@@ -215,9 +216,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Debug environment before deployment
+        env:
+          PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
+          MAINNET_PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
+          POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
+          POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
+        run: |
+          echo "Running debug script..."
+          node scripts/debug-env.js --network polygon
+
       - name: Deploy to Polygon Mainnet
         env:
           PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
+          MAINNET_PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
           POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
           POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
         run: |
