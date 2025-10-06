@@ -34,7 +34,7 @@ jobs:
 
       - name: Try npm install
         run: |
-          npm install
+          npm install || npm install --legacy-peer-deps
           echo "Dependencies installed successfully"
 
       - name: Run tests
