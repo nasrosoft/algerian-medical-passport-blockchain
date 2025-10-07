@@ -203,6 +203,7 @@ jobs:
     needs: [build]
     if: github.ref == 'refs/heads/main'
     environment: production
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code
@@ -214,27 +215,187 @@ jobs:
           node-version: "18.x"
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          echo "Installing dependencies..."
+          npm install
+          echo "Dependencies installed successfully"
 
-      - name: Debug environment before deployment
+      - name: Verify secrets are available
         env:
           PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
           MAINNET_PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
           POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
           POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
         run: |
-          echo "Running debug script..."
+          echo "=== Checking Required Secrets ==="
+          echo "MAINNET_PRIVATE_KEY: $([ -n "$MAINNET_PRIVATE_KEY" ] && echo "✓ Available (${#MAINNET_PRIVATE_KEY} chars)" || echo "✗ Missing")"
+          echo "POLYGON_MAINNET_URL: $([ -n "$POLYGON_MAINNET_URL" ] && echo "✓ Available" || echo "✗ Missing")"
+          echo "POLYGONSCAN_API_KEY: $([ -n "$POLYGONSCAN_API_KEY" ] && echo "✓ Available" || echo "✗ Missing")"
+          
+          if [ -z "$MAINNET_PRIVATE_KEY" ]; then
+            echo "ERROR: MAINNET_PRIVATE_KEY is required but not set"
+            exit 1
+          fi
+          
+          if [ -z "$POLYGON_MAINNET_URL" ]; then
+            echo "ERROR: POLYGON_MAINNET_URL is required but not set"
+            exit 1
+          fi
+
+      - name: Test network connectivity
+        env:
+          POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
+        run: |
+          echo "=== Testing Network Connectivity ==="
+          echo "Testing connection to Polygon mainnet..."
+          curl -X POST -H "Content-Type: application/json" \
+            --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+            "$POLYGON_MAINNET_URL" \
+            --max-time 10 \
+            --fail \
+            --silent \
+            --show-error || {
+            echo "ERROR: Failed to connect to Polygon mainnet RPC"
+            echo "URL: $POLYGON_MAINNET_URL"
+            exit 1
+          }
+          echo "✓ Network connectivity verified"
+
+      - name: Check wallet balance and network details
+        env:
+          PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
+          MAINNET_PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
+          POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
+          POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
+        run: |
+          echo "=== Pre-deployment Checks ==="
           node scripts/debug-env.js --network polygon
+          
+          echo "\n=== Getting Current Gas Price ==="
+          CURRENT_GAS=$(curl -X POST -H "Content-Type: application/json" \
+            --data '{"jsonrpc":"2.0","method":"eth_gasPrice","params":[],"id":1}' \
+            "$POLYGON_MAINNET_URL" \
+            --silent | jq -r '.result' 2>/dev/null || echo "0x0")
+          echo "Current gas price: $CURRENT_GAS"
 
-      - name: Deploy to Polygon Mainnet
+      - name: Deploy to Polygon Mainnet with detailed logging
         env:
           PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
           MAINNET_PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
           POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
           POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
         run: |
-          npm run deploy:mainnet
-          npm run verify:mainnet
+          echo "=== Starting Deployment ==="
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Network: polygon (mainnet)"
+          
+          set -e  # Exit on any error
+          set -o pipefail  # Exit on pipe failures
+          
+          # Function to retry commands
+          retry_deployment() {
+            local max_attempts=3
+            local attempt=1
+            local exit_code=0
+            
+            while [ $attempt -le $max_attempts ]; do
+              echo "\n--- Deployment Attempt $attempt/$max_attempts ---"
+              echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+              
+              if npm run deploy:mainnet 2>&1 | tee deployment_log_$attempt.txt; then
+                echo "✓ Deployment successful on attempt $attempt"
+                return 0
+              else
+                exit_code=$?
+                echo "✗ Deployment failed on attempt $attempt (exit code: $exit_code)"
+                
+                if [ -f deployment_log_$attempt.txt ]; then
+                  echo "\nLast 20 lines of deployment log:"
+                  tail -20 deployment_log_$attempt.txt
+                fi
+                
+                if [ $attempt -lt $max_attempts ]; then
+                  local sleep_time=$((attempt * 10))
+                  echo "Waiting ${sleep_time}s before retry..."
+                  sleep $sleep_time
+                fi
+                
+                attempt=$((attempt + 1))
+              fi
+            done
+            
+            echo "\n=== All deployment attempts failed ==="
+            return $exit_code
+          }
+          
+          # Execute deployment with retry logic
+          retry_deployment
+
+      - name: Verify contracts on Polygonscan
+        if: success()
+        env:
+          PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
+          MAINNET_PRIVATE_KEY: ${{ secrets.MAINNET_PRIVATE_KEY }}
+          POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
+          POLYGONSCAN_API_KEY: ${{ secrets.POLYGONSCAN_API_KEY }}
+        run: |
+          echo "=== Starting Contract Verification ==="
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          
+          # Verification with error handling
+          npm run verify:mainnet 2>&1 | tee verification_log.txt || {
+            echo "Contract verification failed, but deployment was successful"
+            echo "Manual verification may be required"
+            exit 0  # Don't fail the job if only verification fails
+          }
+
+      - name: Upload deployment logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-logs-${{ github.run_id }}
+          path: |
+            deployment_log_*.txt
+            verification_log.txt
+            deployments/
+            contractAddresses.json
+          retention-days: 30
+
+      - name: Post-failure diagnostics
+        if: failure()
+        env:
+          POLYGON_MAINNET_URL: ${{ secrets.POLYGON_MAINNET_URL }}
+        run: |
+          echo "=== Post-Failure Diagnostics ==="
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Exit code from deployment: $?"
+          
+          echo "\n=== System Information ==="
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Working directory: $(pwd)"
+          echo "Available memory: $(free -h 2>/dev/null || echo 'N/A')"
+          echo "Disk space: $(df -h . 2>/dev/null || echo 'N/A')"
+          
+          echo "\n=== Network Status ==="
+          curl -X POST -H "Content-Type: application/json" \
+            --data '{"jsonrpc":"2.0","method":"net_version","params":[],"id":1}' \
+            "$POLYGON_MAINNET_URL" \
+            --max-time 5 || echo "Failed to get network version"
+          
+          echo "\n=== File System State ==="
+          ls -la || echo "Could not list files"
+          
+          echo "\n=== Recent Deployment Logs ==="
+          for log_file in deployment_log_*.txt; do
+            if [ -f "$log_file" ]; then
+              echo "\n--- Contents of $log_file ---"
+              cat "$log_file"
+            fi
+          done
+          
+          echo "\n=== Hardhat Network Configuration ==="
+          node -e "console.log('Config check:', require('./hardhat.config.js').networks.polygon)" 2>/dev/null || echo "Could not read hardhat config"
 
       - name: Create Release
         uses: actions/create-release@v1
